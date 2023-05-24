@@ -15,7 +15,7 @@ public interface ISinglyLinkedList<T> {
 
     public void deleteIndex(int index) throws Exception;
 
-    public void search(T value) throws Exception;
+    public int search(T value) throws Exception;
 
     public Node<T> getFirst() throws Exception;
 
@@ -24,5 +24,7 @@ public interface ISinglyLinkedList<T> {
     public boolean isEmpty() throws Exception;
 
     public int size() throws Exception;
+
+    public int indexOf(T value) throws Exception;
 
 }

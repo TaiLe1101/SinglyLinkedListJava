@@ -9,4 +9,10 @@ public class Node<T> {
         this.next = null;
     }
 
+    @Override
+    public String toString() {
+        StringBuilder strB = new StringBuilder("{data: " + this.data + ", next: " + this.next + "}");
+        return strB.toString();
+    }
+
 }

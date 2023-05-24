@@ -54,7 +54,7 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
         } else {
             Node<T> newNode = new Node<T>(value);
             int i = 0;
-            Node<T> currentNode = head;
+            Node<T> currentNode = getFirst();
             while (currentNode != null) {
                 if (i == index) {
                     newNode.next = currentNode.next;
@@ -82,7 +82,7 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
         if (isEmpty())
             throw new Exception("List is empty");
 
-        Node<T> currentNode = head;
+        Node<T> currentNode = getFirst();
         while (currentNode.next != tail) {
             currentNode = currentNode.next;
         }
@@ -97,17 +97,18 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
         if (isEmpty())
             throw new Exception("List is empty");
 
-        if (tail.data == value) {
-            deleteLast();
-        } else if (head.data == value) {
+        if (head.data == value) {
             deleteFirst();
+        } else if (tail.data == value) {
+            deleteLast();
         } else {
-            Node<T> currentNode = head;
-
+            Node<T> currentNode = getFirst();
+            Node<T> prevNode = null;
             while (currentNode != null) {
-
                 if (currentNode.next.data == value) {
-                    System.out.println(toString(currentNode));
+                    prevNode = currentNode;
+                    prevNode.next = currentNode.next.next;
+                    currentNode = null;
                     break;
                 }
 
@@ -119,23 +120,65 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
     }
 
     @Override
-    public void deleteIndex(int index) {
+    public void deleteIndex(int index) throws Exception {
+        if (isEmpty())
+            throw new Exception("List is empty");
 
+        if (index == 0) {
+            deleteFirst();
+        } else if (index == size() - 1) {
+            deleteLast();
+        } else {
+            Node<T> currentNode = getFirst();
+            Node<T> prevNode = null;
+
+            while (currentNode != null) {
+                if (indexOf(currentNode.next.data) == index - 1) {
+                    prevNode = currentNode;
+                    prevNode.next = currentNode.next.next;
+                    currentNode = null;
+                    break;
+                }
+                currentNode = currentNode.next;
+            }
+        }
+
+        count--;
     }
 
     @Override
-    public void search(T value) {
+    public int search(T value) {
+        Node<T> currentNode = getFirst();
+        int i = 0;
+        boolean isFailed = true;
 
+        if (value == head.data) {
+            return i;
+        }
+
+        while (currentNode != null) {
+            if (currentNode.data == value)
+                return i;
+
+            i++;
+            currentNode = currentNode.next;
+        }
+
+        if (isFailed) {
+            return -1;
+        }
+
+        return i;
     }
 
     @Override
     public Node<T> getFirst() {
-        return null;
+        return head;
     }
 
     @Override
     public Node<T> getLast() {
-        return null;
+        return tail;
     }
 
     @Override
@@ -149,17 +192,32 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
     }
 
     @Override
+    public int indexOf(T value) throws Exception {
+        int i = 0;
+        Node<T> currentNode = getFirst();
+        while (currentNode != null) {
+            if (currentNode.data == value) {
+                return i;
+            }
+            i++;
+            currentNode = currentNode.next;
+        }
+        return i;
+    }
+
+    @Override
     public String toString() {
         StringBuilder bStr = new StringBuilder("SinglyLinkedList -> [ ");
 
         if (!isEmpty()) {
-            while (head != null) {
-                bStr.append(head.data.toString());
-                if (head.next != null) {
+            Node<T> currentNode = getFirst();
+            while (currentNode != null) {
+                bStr.append(currentNode.data.toString());
+                if (currentNode.next != null) {
                     bStr.append(", ");
                 }
 
-                head = head.next;
+                currentNode = currentNode.next;
             }
         }
 
@@ -167,24 +225,4 @@ public class SinglyLinkedList<T> implements ISinglyLinkedList<T> {
 
         return bStr.toString();
     }
-
-    public String toString(Node<T> listLinked) {
-        StringBuilder bStr = new StringBuilder("SinglyLinkedList -> [ ");
-
-        if (!isEmpty()) {
-            while (listLinked != null) {
-                bStr.append(listLinked.data.toString());
-                if (listLinked.next != null) {
-                    bStr.append(", ");
-                }
-
-                listLinked = listLinked.next;
-            }
-        }
-
-        bStr.append(" ]");
-
-        return bStr.toString();
-    }
-
 }
